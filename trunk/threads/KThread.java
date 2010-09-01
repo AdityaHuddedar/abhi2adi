@@ -415,9 +415,29 @@ public class KThread {
         /**
          * Tests whether this module is working.
          */
-        public static void selfTest() {
-                Communicator.selfTest();
-        }
+        public static void selfTest() 
+        {
+            Condition2.selfTest();    
+	    /*KThread t1=new KThread(new Runnable()
+                {
+		    public void run()
+		    {
+			System.out.println("Thread 1 starting....");
+			KThread t2=new KThread(new Runnable()
+			{
+			    public void run()
+			    {
+			    System.out.println("Thread 2 executed to completion");
+			    }
+			});
+			t2.fork();t2.join();
+			System.out.println("Thread 1 completed");
+		    }
+		});
+		t1.fork();
+		t1.join();
+		Machine.interrupt().enable();*/
+	}
 
         private static final char dbgThread = 't';
 
