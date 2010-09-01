@@ -280,7 +280,7 @@ public class KThread {
          * call is not guaranteed to return. This thread must not be the current
          * thread.
          */
-        /*public void join() {
+        public void join() {
                 Lib.debug(dbgThread, "Joining to thread: " + toString());
 
                 Lib.assertTrue(this != currentThread);
@@ -292,7 +292,7 @@ public class KThread {
                 joinerThread = currentThread;
                 KThread.sleep();
                 Machine.interrupt().restore(intStatus);
-        }*/
+        }
 
         /**
          * Create the idle thread. Whenever there are no threads ready to be run,
