@@ -1,6 +1,7 @@
 package nachos.threads;
 
 import nachos.machine.*;
+import java.util.*;
 
 /**
  * A KThread is a thread that can be used to execute Nachos kernel code. Nachos
@@ -193,11 +194,13 @@ public class KThread {
 
 
                 currentThread.status = statusFinished;
+                KThread joinerThread = joinerThreads.get(currentThread);
 
                 if(joinerThread != null){
                         // Maybe someone else woke the thread up already.
                         // Only ready it if they haven't.
                         if(joinerThread.status != statusReady){
+                                joinerThreads.remove(currentThread);
                                 joinerThread.ready();
                         }
                 }
@@ -289,7 +292,7 @@ public class KThread {
                 }
 
                 boolean intStatus = Machine.interrupt().disable();
-                joinerThread = currentThread;
+                joinerThreads.put(this, currentThread);
                 KThread.sleep();
                 Machine.interrupt().restore(intStatus);
         }
@@ -415,29 +418,13 @@ public class KThread {
         /**
          * Tests whether this module is working.
          */
-        public static void selfTest() 
-        {
-            Condition2.selfTest();    
-	    /*KThread t1=new KThread(new Runnable()
-                {
-		    public void run()
-		    {
-			System.out.println("Thread 1 starting....");
-			KThread t2=new KThread(new Runnable()
-			{
-			    public void run()
-			    {
-			    System.out.println("Thread 2 executed to completion");
-			    }
-			});
-			t2.fork();t2.join();
-			System.out.println("Thread 1 completed");
-		    }
-		});
-		t1.fork();
-		t1.join();
-		Machine.interrupt().enable();*/
-	}
+        public static void selfTest() {
+	    Communicator.selfTest(new Alarm());
+                /*Lib.debug(dbgThread, "Enter KThread.selfTest");
+
+                new KThread(new PingTest(1)).setName("forked thread").fork();
+                new PingTest(0).run();*/
+        }
 
         private static final char dbgThread = 't';
 
@@ -477,5 +464,5 @@ public class KThread {
         private static KThread toBeDestroyed = null;
         private static KThread idleThread = null;
 
-        private static KThread joinerThread;
+        private static HashMap<KThread, KThread> joinerThreads = new HashMap<KThread, KThread>();
 }

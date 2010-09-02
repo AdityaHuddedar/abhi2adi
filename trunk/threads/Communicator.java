@@ -7,7 +7,7 @@ import nachos.machine.*;
  * messages. Multiple threads can be waiting to <i>speak</i>,
  * and multiple threads can be waiting to <i>listen</i>. But there should never
  * be a time when both a speaker and a listener are waiting, because the two
- * threads can be paired off at this point.
+ * threads can be paired off at this point.There should always be equal number of speakers and listeners during the whole execution
  */
 public class Communicator {
         private Lock commLock;
@@ -87,7 +87,7 @@ public class Communicator {
                 }
         }
 
-        public static void selfTest(){
+        public static void selfTest(final Alarm a){
                 System.out.println("Testing Communicator...");
                 final Communicator c = new Communicator();
 
@@ -99,16 +99,16 @@ public class Communicator {
                         }
                 });
 
-                final Alarm a = new Alarm();
                 KThread t2 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("Speaking word 134 soon...");
-                                a.waitUntil(Machine.timer().getTime() + 5000000);
+                                a.waitUntil(1000000);
                                 System.out.println("Speaking now.");
                                 c.speak(134);
                                 System.out.println("Spoke 134.");
                         }
                 });
+		
 
                 t1.fork();
                 t2.fork();
@@ -119,7 +119,7 @@ public class Communicator {
                 t1 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("Listening soon...");
-                                a.waitUntil(Machine.timer().getTime() + 5000000);
+                                a.waitUntil(1000000);
                                 System.out.println("Listening now.");
                                 int w = c.listen();
                                 System.out.println("Got: " + w);

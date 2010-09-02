@@ -8,7 +8,7 @@ import java.util.*;
  * until a certain time.
  */
 public class Alarm {
-        private LinkedList<Long> wakeTimes;
+        private PriorityQueue<Long> wakeTimes;
         private HashMap<Long, KThread> waiters;
         /**
          * Allocate a new Alarm. Set the machine's timer interrupt handler to this
@@ -21,8 +21,8 @@ public class Alarm {
                 Machine.timer().setInterruptHandler(new Runnable() {
                         public void run() { timerInterrupt(); }
                 });
-                
-                wakeTimes = new LinkedList<Long>();
+
+                wakeTimes = new PriorityQueue<Long>();
                 waiters = new HashMap<Long, KThread>();
         }
 
@@ -34,20 +34,21 @@ public class Alarm {
          */
         public void timerInterrupt() {
                 KThread.yield();
+                
+                boolean intStatus = Machine.interrupt().disable();
 
                 if(wakeTimes.size() > 0){
-                        long firstWakeTime = wakeTimes.get(0);
+                        long firstWakeTime = wakeTimes.peek();
                         KThread firstWaiter = waiters.get(firstWakeTime);
-        
+
                         if(Machine.timer().getTime() >= firstWakeTime &&
                                         firstWaiter != null){
-                                boolean intStatus = Machine.interrupt().disable();
                                 firstWaiter.ready();
-                                
+
                                 // Remove the newly awakened thread, and it's corresponding
                                 // wait time entry.
                                 waiters.remove(firstWaiter);
-                                wakeTimes.remove(0);
+                                wakeTimes.poll();
                                 Machine.interrupt().restore(intStatus);
                         }
                 }
@@ -79,28 +80,28 @@ public class Alarm {
                 Machine.interrupt().restore(intStatus);
         }
 
-        public static void selfTest() {
+        public static void selfTest(final Alarm a) {
+                System.out.println();
                 System.out.println("Testing Alarm...");
-                final Alarm a = new Alarm();
                 KThread t1 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("thread 1 waiting.");
-                                a.waitUntil(5000000);
+                                a.waitUntil(10000000);
                                 System.out.println("thread 1 waited.");
                         }
                 });
-                
+
                 KThread t2 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("thread 2 waiting.");
-                                a.waitUntil(10000000);
+                                a.waitUntil(20000000);
                                 System.out.println("thread 2 waited.");
                         }
                 });
-                
+
                 t1.fork();
                 t2.fork();
-                
+
                 t1.join();
                 t2.join();
         }
