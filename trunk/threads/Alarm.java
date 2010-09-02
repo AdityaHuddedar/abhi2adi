@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class Alarm {
         private PriorityQueue<Long> wakeTimes;
-        private HashMap<Long, KThread> waiters;
+        private HashMap<Long,LinkedList<KThread>> waiters;
         /**
          * Allocate a new Alarm. Set the machine's timer interrupt handler to this
          * alarm's callback.
@@ -23,7 +23,7 @@ public class Alarm {
                 });
 
                 wakeTimes = new PriorityQueue<Long>();
-                waiters = new HashMap<Long, KThread>();
+                waiters = new HashMap<Long,LinkedList<KThread>>();
         }
 
         /**
@@ -39,15 +39,16 @@ public class Alarm {
 
                 if(wakeTimes.size() > 0){
                         long firstWakeTime = wakeTimes.peek();
-                        KThread firstWaiter = waiters.get(firstWakeTime);
+                        LinkedList<KThread> firstWaiters = waiters.get(firstWakeTime);
 
                         if(Machine.timer().getTime() >= firstWakeTime &&
-                                        firstWaiter != null){
-                                firstWaiter.ready();
-
+                                        firstWaiters != null){
+                                for(int i=0;i<firstWaiters.size();i++)
+				    firstWaiters.get(i).ready();
+				
                                 // Remove the newly awakened thread, and it's corresponding
                                 // wait time entry.
-                                waiters.remove(firstWaiter);
+                                waiters.remove(firstWaiters);
                                 wakeTimes.poll();
                                 Machine.interrupt().restore(intStatus);
                         }
@@ -73,8 +74,19 @@ public class Alarm {
                 KThread temp = KThread.currentThread();
 
                 boolean intStatus = Machine.interrupt().disable();
-                wakeTimes.add(wakeTime);
-                waiters.put(wakeTime, temp);
+		if(waiters.containsKey(wakeTime))
+		{
+		    LinkedList templist = waiters.get(wakeTime);
+		    templist.add(temp);
+		    waiters.put(wakeTime,templist);
+		}
+		else
+		{
+		    wakeTimes.add(wakeTime);
+		    LinkedList<KThread> templist = new LinkedList<KThread>();
+		    templist.add(temp);
+		    waiters.put(wakeTime,templist);
+		}
 
                 KThread.sleep();
                 Machine.interrupt().restore(intStatus);
@@ -86,7 +98,7 @@ public class Alarm {
                 KThread t1 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("thread 1 waiting.");
-                                a.waitUntil(10000000);
+                                a.waitUntil(10000010);
                                 System.out.println("thread 1 waited.");
                         }
                 });
@@ -94,7 +106,7 @@ public class Alarm {
                 KThread t2 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("thread 2 waiting.");
-                                a.waitUntil(20000000);
+                                a.waitUntil(10000000);
                                 System.out.println("thread 2 waited.");
                         }
                 });
