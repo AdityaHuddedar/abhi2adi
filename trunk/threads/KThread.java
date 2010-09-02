@@ -281,7 +281,7 @@ public class KThread {
          * Waits for this thread to finish. If this thread is already finished,
          * return immediately. This method must only be called once; the second
          * call is not guaranteed to return. This thread must not be the current
-         * thread.
+         * thread.comment
          */
         public void join() {
                 Lib.debug(dbgThread, "Joining to thread: " + toString());
