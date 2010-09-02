@@ -73,7 +73,8 @@ public class Condition2 {
                 }
         }
 
-        public static void selfTest() {
+        public static void selfTest(final Alarm a) {
+                System.out.println();
                 System.out.println("Testing Condition2...");
                 final Lock l = new Lock();
                 final Condition2 testCond = new Condition2(l);
@@ -91,8 +92,7 @@ public class Condition2 {
                 KThread t2 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("Thread 2 waking thread 1 in a second or so...");
-                                Alarm a = new Alarm();
-                                a.waitUntil(Machine.timer().getTime() + 1000000);
+                                a.waitUntil(1000000);
                                 l.acquire();
                                 testCond.wake();
                                 l.release();
