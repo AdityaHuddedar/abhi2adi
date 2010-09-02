@@ -92,7 +92,7 @@ public class Condition2 {
                 KThread t2 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("Thread 2 waking thread 1 in a second or so...");
-                                a.waitUntil(1000000);
+                                a.waitUntil(1000);
                                 l.acquire();
                                 testCond.wake();
                                 l.release();
