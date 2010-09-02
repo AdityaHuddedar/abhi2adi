@@ -183,7 +183,7 @@ public class KThread {
          * delete this thread.
          */
         public static void finish() {
-                Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
+	    Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
 
                 Machine.interrupt().disable();
 
@@ -194,15 +194,10 @@ public class KThread {
 
 
                 currentThread.status = statusFinished;
-                KThread joinerThread = joinerThreads.get(currentThread);
 
                 if(joinerThread != null){
-                        // Maybe someone else woke the thread up already.
-                        // Only ready it if they haven't.
-                        if(joinerThread.status != statusReady){
-                                joinerThreads.remove(currentThread);
-                                joinerThread.ready();
-                        }
+                        if(joinerThread.status != statusReady)
+                        joinerThread.ready();
                 }
 
                 sleep();
@@ -287,12 +282,12 @@ public class KThread {
                 Lib.debug(dbgThread, "Joining to thread: " + toString());
 
                 Lib.assertTrue(this != currentThread);
-                if(status == statusFinished){
+		if(status == statusFinished){
                         return;
                 }
 
                 boolean intStatus = Machine.interrupt().disable();
-                joinerThreads.put(this, currentThread);
+                joinerThread = currentThread;
                 KThread.sleep();
                 Machine.interrupt().restore(intStatus);
         }
@@ -419,7 +414,7 @@ public class KThread {
          * Tests whether this module is working.
          */
         public static void selfTest() {
-	    Communicator.selfTest(new Alarm());
+	    Alarm.selfTest(new Alarm());
                 /*Lib.debug(dbgThread, "Enter KThread.selfTest");
 
                 new KThread(new PingTest(1)).setName("forked thread").fork();
@@ -463,6 +458,5 @@ public class KThread {
         private static KThread currentThread = null;
         private static KThread toBeDestroyed = null;
         private static KThread idleThread = null;
-
-        private static HashMap<KThread, KThread> joinerThreads = new HashMap<KThread, KThread>();
+	private static KThread joinerThread;
 }

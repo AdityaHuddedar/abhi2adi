@@ -379,7 +379,7 @@ public class PriorityScheduler extends Scheduler {
                  * @see nachos.threads.ThreadQueue#acquire
                  * @see nachos.threads.ThreadQueue#nextThread
                  */
-                public void acquire(PriorityQueue) {
+                public void acquire(PriorityQueue waitQueue) {
                         waitQueue = null;
                         donation = 0;
                         lastEffectivePriority = -1;
