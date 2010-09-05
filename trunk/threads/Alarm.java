@@ -70,10 +70,11 @@ public class Alarm {
          * @see nachos.machine.Timer#getTime()
          */
         public void waitUntil(long x) {
-                long wakeTime = Machine.timer().getTime() + x;
+		boolean intStatus = Machine.interrupt().disable();
+               long wakeTime = Machine.timer().getTime() + x;
                 KThread temp = KThread.currentThread();
 
-                boolean intStatus = Machine.interrupt().disable();
+               
 		if(waiters.containsKey(wakeTime))
 		{
 		    LinkedList templist = waiters.get(wakeTime);
@@ -98,7 +99,7 @@ public class Alarm {
                 KThread t1 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("thread 1 waiting.");
-                                a.waitUntil(10000010);
+                                a.waitUntil(10000712);
                                 System.out.println("thread 1 waited.");
                         }
                 });
