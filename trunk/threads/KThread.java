@@ -283,17 +283,18 @@ public class KThread {
 		Lib.assertTrue(this != currentThread);
 		
 		Machine.interrupt().disable();
-		//if(status==statusFinished) 
-		//	{
-		//		Machine.interrupt().enable();
-		//	}
-		//else	{
+		if(status==statusFinished) 
+			{
+				Machine.interrupt().enable();
+				return;
+			}
+		else	{
 			joinerThreads.put(this,currentThread);
 			//System.out.println(currentThread.getName());
 			sleep();
 			Machine.interrupt().enable();
 			//System.out.println("join working");
-		//	}
+			}
 		//Machine.interrupt().enable();
 	}
 	
@@ -421,7 +422,7 @@ public class KThread {
 	*/
 	public static void selfTest() {
 		Lib.debug(dbgThread, "Enter KThread.selfTest");
-		Condition2.selfTest(new Alarm());
+		//Condition2.selfTest(new Alarm());
 		Communicator.selfTest(new Alarm());
 		final KThread t=new KThread(new PingTest(1)).setName("forked thread");
 		//new PingTest(0).run();
@@ -441,8 +442,8 @@ public class KThread {
 				System.out.println("Thread 4 awake.");
 			}
 		});
-		t4.fork();
-		t4.join();
+		//t4.fork();
+		//t4.join();
 		//t2.fork();
 		//t2.join();
 	}
