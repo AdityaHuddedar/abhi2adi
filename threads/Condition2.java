@@ -67,10 +67,11 @@ public class Condition2 {
          */
         public void wakeAll() {
                 Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-
-                while(!waitQueue.isEmpty()) {
-                        wake();
-                }
+                boolean intStatus = Machine.interrupt().disable();
+                while(!waitQueue.isEmpty()){
+			waitQueue.poll().ready();
+		}
+                Machine.interrupt().restore(intStatus);  
         }
 
         public static void selfTest(final Alarm a) {
@@ -104,7 +105,7 @@ public class Condition2 {
                 t2.fork();
 
                 t1.join();
-                //t2.join();
+                t2.join();
         }
 
         private Lock conditionLock;
