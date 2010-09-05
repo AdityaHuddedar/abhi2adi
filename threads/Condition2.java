@@ -104,7 +104,7 @@ public class Condition2 {
                 t2.fork();
 
                 t1.join();
-                t2.join();
+                //t2.join();
         }
 
         private Lock conditionLock;

@@ -11,20 +11,24 @@ import nachos.machine.*;
  */
 public class Communicator {
         private Lock commLock;
-        private Condition2 readyCond;
+        private Condition2 listeners;
+        private Condition2 speakers;
         private Integer word;
-        private boolean hasListener;
-        private boolean hasSpoken;
+        private int count;
+        //private boolean hasListener;
+        //private boolean hasSpoken;
 
         /**
          * Allocate a new communicator.
          */
         public Communicator() {
                 commLock = new Lock();
-                readyCond = new Condition2(commLock);
+                listeners = new Condition2(commLock);
+                speakers =new Condition2(commLock);
                 word = null;
-                hasListener = false;
-                hasSpoken = false;
+                count=0;
+                //hasListener = false;
+                //hasSpoken = false;
         }
 
         /**
@@ -42,14 +46,16 @@ public class Communicator {
                 // Otherwise, sleep until the listener arrives.
                 commLock.acquire();
 
-                this.word = word;
-                hasSpoken = true;
-
-                if(hasListener){
-                        readyCond.wakeAll();
+                count++;
+                //hasSpoken = true;
+                this.word=word;
+                if(count<=0){
+			//this.word=word;
+                        listeners.wakeAll();
+                        count--;
                 }else{
-                        readyCond.sleep();
-                }
+                        speakers.sleep();
+                   }
                 commLock.release();
         }
 
@@ -61,83 +67,97 @@ public class Communicator {
          */    
         public int listen() {
                 commLock.acquire();
-
-                if(hasSpoken){
-                        readyCond.wakeAll();
-
-                        int temp = word;
-                        word = null;
-
-                        hasListener = false;
-                        hasSpoken = false;
-                        commLock.release();
-                        return temp;
+		count--;
+                if(count>0){
+			speakers.wakeAll();
+			count++;
+			//return word;
+//                         readyCond.wakeAll();
+// 
+//                         int temp = word;
+//                         word = null;
+// 
+//                         hasListener = false;
+//                         hasSpoken = false;
+//                         commLock.release();
+//                         return temp;
                 }else{
-                        hasListener = true;
-                        readyCond.sleep();
+                        //hasListener = true;
+                       // count--;
+                        listeners.sleep();
 
-                        int temp = word;
-                        word = null;
+                        //int temp = word;
+                        //word = null;
 
-                        hasListener = false;
-                        hasSpoken = false;
-                        readyCond.wakeAll();
-                        commLock.release();
-                        return temp;
+                        //hasListener = false;
+                        //hasSpoken = false;
+                        //readyCond.wakeAll();
+                        
+                        //return word;
+                        //return temp;
                 }
+                
+               commLock.release();
+               return word;
         }
 
         public static void selfTest(final Alarm a){
                 System.out.println("Testing Communicator...");
                 final Communicator c = new Communicator();
 
-                KThread t1 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("Listening...");
-                                int w = c.listen();
-                                System.out.println("Got: " + w);
-                        }
-                });
-
-                KThread t2 = new KThread(new Runnable(){
+               final KThread t2 = new KThread(new Runnable(){
                         public void run(){
                                 System.out.println("Speaking word 134 soon...");
-                                a.waitUntil(1000000);
+                                //a.waitUntil(1000000);
                                 System.out.println("Speaking now.");
                                 c.speak(134);
+                                //c.speak(345);
+				//c.speak(900);
                                 System.out.println("Spoke 134.");
                         }
                 });
+               KThread t1 = new KThread(new Runnable(){
+                        public void run(){
+				//t2.join();
+                                System.out.println("Listening...");
+                                System.out.println("Got: " + c.listen());
+                                //System.out.println("Got: " + c.listen());
+                                //System.out.println("Got: " + c.listen());
+                                
+                        }
+                });
+
+               
 		
 
                 t1.fork();
                 t2.fork();
 
                 t1.join();
-                t2.join();
+               // t2.join();
 
-                t1 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("Listening soon...");
-                                a.waitUntil(1000000);
-                                System.out.println("Listening now.");
-                                int w = c.listen();
-                                System.out.println("Got: " + w);
-                        }
-                });
+//                 t1 = new KThread(new Runnable(){
+//                         public void run(){
+//                                 System.out.println("Listening soon...");
+//                                 a.waitUntil(1000000);
+//                                 System.out.println("Listening now.");
+//                                 int w = c.listen();
+//                                 System.out.println("Got: " + w);
+//                         }
+//                 });
+// 
+//                 t2 = new KThread(new Runnable(){
+//                         public void run(){
+//                                 System.out.println("Speaking word 392...");
+//                                 c.speak(392);
+//                                 System.out.println("Spoke 392.");
+//                         }
+//                 });
+// 
+//                 t1.fork();
+//                 t2.fork();
 
-                t2 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("Speaking word 392...");
-                                c.speak(392);
-                                System.out.println("Spoke 392.");
-                        }
-                });
-
-                t1.fork();
-                t2.fork();
-
-                t1.join();
-                t2.join();
+                //t1.join();
+                //t2.join();
         }
 }
