@@ -26,7 +26,7 @@ import nachos.machine.*;
  * 2nd thread.
  */
 public class AlarmTest {
-
+    static final Alarm a=new Alarm();
     //aTest class--waits and prints when finished waiting
     private static class aTest implements Runnable {
         //wait time
@@ -39,7 +39,7 @@ public class AlarmTest {
         
         public void run() {
             //set wait time for thread
-            ThreadedKernel.alarm.waitUntil(wTime);
+            a.waitUntil(wTime);
             
             //finished waiting
             System.out.println("Alarm Ringing! (time = "
