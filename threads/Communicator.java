@@ -111,49 +111,50 @@ public class Communicator {
         }
 
         public static void selfTest(final Alarm a){
-                System.out.println("Testing Communicator...");
-                final Communicator c = new Communicator();
-
-                KThread t2 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("Speaking word 134 soon...");
-                                a.waitUntil(1000000);
-                                System.out.println("Speaking now.");
-                                c.speak(134);
-                                /*c.speak(345);
-				c.speak(900)*/;
-                                System.out.println("Spoke 134.");
-                        }
-                });
-               KThread t1 = new KThread(new Runnable(){
-                        public void run(){
-				//t2.join();
-                                System.out.println("Listening...");
-                                System.out.println("Got: " + c.listen());
-                                //System.out.println("Got: " + c.listen());
-                                //System.out.println("Got: " + c.listen());
-                                
-                        }
-                });
+	    CommunicatorTest.runTest();
+//                 System.out.println("Testing Communicator...");
+//                 final Communicator c = new Communicator();
+// 
+//                 KThread t2 = new KThread(new Runnable(){
+//                         public void run(){
+//                                 System.out.println("Speaking word 134 soon...");
+//                                 a.waitUntil(1000000);
+//                                 System.out.println("Speaking now.");
+//                                 c.speak(134);
+//                                 /*c.speak(345);
+// 				c.speak(900)*/;
+//                                 System.out.println("Spoke 134.");
+//                         }
+//                 });
+//                KThread t1 = new KThread(new Runnable(){
+//                         public void run(){
+// 				//t2.join();
+//                                 System.out.println("Listening...");
+//                                 System.out.println("Got: " + c.listen());
+//                                 //System.out.println("Got: " + c.listen());
+//                                 //System.out.println("Got: " + c.listen());
+//                                 
+//                         }
+//                 });
 
                
 		
 
-                t1.fork();
-                t2.fork();
-
-                t1.join();
-                t2.join();
-
-                t1 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("Got a listener..t1.");
-                                a.waitUntil(10000000);
-                                System.out.println("Listening now.");
-                                int w = c.listen();
-                                System.out.println("t1Got: " + w);
-                        }
-                });
+//                 t1.fork();
+//                 t2.fork();
+// 
+//                 t1.join();
+//                 t2.join();
+// 
+//                 t1 = new KThread(new Runnable(){
+//                         public void run(){
+//                                 System.out.println("Got a listener..t1.");
+//                                 a.waitUntil(10000000);
+//                                 System.out.println("Listening now.");
+//                                 int w = c.listen();
+//                                 System.out.println("t1Got: " + w);
+//                         }
+//                 });
 //                KThread t3 = new KThread(new Runnable(){
 // 			public void run(){
 // 				System.out.println("Got a listener..t3.");
@@ -164,31 +165,31 @@ public class Communicator {
 // 				}
 // 				});
 
-                t2 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("t2Speaking word 392...");
-                                c.speak(392);
-                                System.out.println("t2Spoke 392.");
-                        }
-                });
-                KThread t4 = new KThread(new Runnable(){
-			public void run(){
-				System.out.println("t4Speaking word 392...");
-				c.speak(392);
-				System.out.println("t4Spoke 392.");
-				}
-				});
-
-                t1.fork();
-                //t3.fork();
-                t2.fork();
-                t4.fork();
+//                 t2 = new KThread(new Runnable(){
+//                         public void run(){
+//                                 System.out.println("t2Speaking word 392...");
+//                                 c.speak(392);
+//                                 System.out.println("t2Spoke 392.");
+//                         }
+//                 });
+//                 KThread t4 = new KThread(new Runnable(){
+// 			public void run(){
+// 				System.out.println("t4Speaking word 392...");
+// 				c.speak(392);
+// 				System.out.println("t4Spoke 392.");
+// 				}
+// 				});
+// 
+//                 t1.fork();
+//                 //t3.fork();
+//                 t2.fork();
+//                 t4.fork();
                 
-
+/*
                 t1.join();
                 //t3.join();
                 t2.join();
-                t4.join();
+                t4.join();*/
                 
         }
 }

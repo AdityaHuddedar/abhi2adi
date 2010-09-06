@@ -33,16 +33,16 @@ public class Alarm {
          * that should be run.
          */
         public void timerInterrupt() {
-                KThread.yield();
                 
                 boolean intStatus = Machine.interrupt().disable();
-
+		LinkedList<KThread> firstWaiters;
                 if(wakeTimes.size() > 0){
                         long firstWakeTime = wakeTimes.peek();
-                        LinkedList<KThread> firstWaiters = waiters.get(firstWakeTime);
-
-                        if(Machine.timer().getTime() >= firstWakeTime &&
-                                        firstWaiters != null){
+			while (Machine.timer().getTime()>=firstWakeTime)
+			{
+                        firstWaiters = waiters.get(firstWakeTime);
+			
+                        if(firstWaiters != null){
                                 for(int i=0;i<firstWaiters.size();i++)
 				    firstWaiters.get(i).ready();
 				
@@ -50,9 +50,15 @@ public class Alarm {
                                 // wait time entry.
                                 waiters.remove(firstWaiters);
                                 wakeTimes.poll();
-                                Machine.interrupt().restore(intStatus);
+				if(wakeTimes.size()==0)
+				    break;
+				firstWakeTime=wakeTimes.peek();
+                                
                         }
+			}
                 }
+                Machine.interrupt().restore(intStatus);
+                KThread.yield();
         }
 
         /**
@@ -71,10 +77,9 @@ public class Alarm {
          */
         public void waitUntil(long x) {
 		boolean intStatus = Machine.interrupt().disable();
-               long wakeTime = Machine.timer().getTime() + x;
+                long wakeTime = Machine.timer().getTime() + x;
                 KThread temp = KThread.currentThread();
 
-               
 		if(waiters.containsKey(wakeTime))
 		{
 		    LinkedList templist = waiters.get(wakeTime);
@@ -94,28 +99,29 @@ public class Alarm {
         }
 
         public static void selfTest(final Alarm a) {
-                System.out.println();
-                System.out.println("Testing Alarm...");
-                KThread t1 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("thread 1 waiting.");
-                                a.waitUntil(10000712);
-                                System.out.println("thread 1 waited.");
-                        }
-                });
-
-                KThread t2 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("thread 2 waiting.");
-                                a.waitUntil(10000000);
-                                System.out.println("thread 2 waited.");
-                        }
-                });
-
-                t1.fork();
-                t2.fork();
-
-                t1.join();
-                t2.join();
+	        AlarmTest.runTest();
+//                 System.out.println();
+//                 System.out.println("Testing Alarm...");
+//                 KThread t1 = new KThread(new Runnable(){
+//                         public void run(){
+//                                 System.out.println("thread 1 waiting.");
+//                                 a.waitUntil(10000712);
+//                                 System.out.println("thread 1 waited.");
+//                         }
+//                 });
+// 
+//                 KThread t2 = new KThread(new Runnable(){
+//                         public void run(){
+//                                 System.out.println("thread 2 waiting.");
+//                                 a.waitUntil(10000000);
+//                                 System.out.println("thread 2 waited.");
+//                         }
+//                 });
+// 
+//                 t1.fork();
+//                 t2.fork();
+// 
+//                 t1.join();
+//                 t2.join();
         }
 }
