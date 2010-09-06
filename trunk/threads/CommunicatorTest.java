@@ -35,7 +35,7 @@ public class CommunicatorTest {
      * inclusive
      */
     private int randomDelay() {
-      return minDelay + rng.nextInt(1 + maxDelay - minDelay) - 1;
+      return minDelay + rng.nextInt(1 + maxDelay - minDelay);
     }
 
     /**
@@ -121,15 +121,15 @@ public class CommunicatorTest {
     for (int i = 0; i < numRVThreads; i++) {
       if (i % 2 == 0) {
         /* Creating a speaker */
-        rvs[i] = new KThread(new RVThread("RV-Thread(speaker) #" + i, comm, true, howMany,
+        rvs[i] = new KThread(new RVThread("Speaker #" + i, comm, true, howMany,
             commFinished, rng));
-        rvs[i].setName("RV-Thread(speaker) #" + i);
+        rvs[i].setName("Speaker #" + i);
       }
       else {
         /* Creating a listener */
-        rvs[i] = new KThread(new RVThread("RV-Thread(listener) #" + i, comm, false, howMany,
+        rvs[i] = new KThread(new RVThread("Listener #" + i, comm, false, howMany,
             commFinished, rng));
-        rvs[i].setName("RV-Thread(listener) #" + i);
+        rvs[i].setName("Listener #" + i);
       }
       /* fork() */
       rvs[i].fork();
@@ -149,12 +149,12 @@ public class CommunicatorTest {
   }
 
   /* Number of Threads. Must be EVEN!! */
-  private static final int numRVThreads = 8;
+  private static final int numRVThreads = 16;
 
   /* Number of RV actions per thread */
-  private static final int howMany = 1000;
+  private static final int howMany =10 ;
 
   /* Bounds on delay between attempts to speak/listen */
-  private static final int minDelay = 0;
-  private static final int maxDelay = 0;
+  private static final int minDelay = 50;
+  private static final int maxDelay = 1000;
 }

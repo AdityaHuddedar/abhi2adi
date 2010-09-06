@@ -422,7 +422,7 @@ public class KThread {
 	public static void selfTest() {
 		Lib.debug(dbgThread, "Enter KThread.selfTest");
 		//Alarm.selfTest(new Alarm());
-		Communicator.selfTest(new Alarm());
+		Communicator.selfTest(ThreadedKernel.alarm);
 		final KThread t=new KThread(new PingTest(1)).setName("forked thread");
 		//new PingTest(0).run();
 		final KThread t3 = new KThread(new Runnable(){

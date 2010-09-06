@@ -33,7 +33,6 @@ public class Alarm {
          * that should be run.
          */
         public void timerInterrupt() {
-                
                 boolean intStatus = Machine.interrupt().disable();
 		LinkedList<KThread> firstWaiters;
                 if(wakeTimes.size() > 0){
@@ -100,28 +99,28 @@ public class Alarm {
 
         public static void selfTest(final Alarm a) {
 	        AlarmTest.runTest();
-//                 System.out.println();
-//                 System.out.println("Testing Alarm...");
-//                 KThread t1 = new KThread(new Runnable(){
-//                         public void run(){
-//                                 System.out.println("thread 1 waiting.");
-//                                 a.waitUntil(10000712);
-//                                 System.out.println("thread 1 waited.");
-//                         }
-//                 });
-// 
-//                 KThread t2 = new KThread(new Runnable(){
-//                         public void run(){
-//                                 System.out.println("thread 2 waiting.");
-//                                 a.waitUntil(10000000);
-//                                 System.out.println("thread 2 waited.");
-//                         }
-//                 });
-// 
-//                 t1.fork();
-//                 t2.fork();
-// 
-//                 t1.join();
-//                 t2.join();
+                /*System.out.println();
+                System.out.println("Testing Alarm...");
+                KThread t1 = new KThread(new Runnable(){
+                        public void run(){
+                                System.out.println("thread 1 waiting.");
+                                a.waitUntil(10000250);
+                                System.out.println("thread 1 waited.");
+                        }
+                });
+
+                KThread t2 = new KThread(new Runnable(){
+                        public void run(){
+                                System.out.println("thread 2 waiting.");
+                                a.waitUntil(10000250);
+                                System.out.println("thread 2 waited.");
+                        }
+                });
+
+                t1.fork();
+                t2.fork();
+
+                t1.join();
+                t2.join();*/
         }
 }
