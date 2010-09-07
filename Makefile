@@ -20,7 +20,7 @@ threads =	ThreadedKernel KThread Alarm \
 		Scheduler ThreadQueue RoundRobinScheduler \
 		Semaphore Lock Condition SynchList \
 		Condition2 Communicator Rider ElevatorController \
-		PriorityScheduler LotteryScheduler Boat CommunicatorTest Condition2Test  AlarmTest
+		PriorityScheduler LotteryScheduler Boat CommunicatorTest Condition2Test  AlarmTest PrioritySchedulerTest
 
 userprog =	UserKernel UThread UserProcess SynchConsole
 
