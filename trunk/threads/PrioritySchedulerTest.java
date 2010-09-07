@@ -69,7 +69,7 @@ public class PrioritySchedulerTest {
                 target = partner;
 
               /* Pick a new random priority, different from the target's current one */
-              int oldPriority = target.getPriority();
+              int oldPriority = getThreadState(target).getPriority();
               int newPriority = rng.nextInt(6);
               while (newPriority == oldPriority) {
                 newPriority = rng.nextInt(6);
@@ -206,7 +206,7 @@ public class PrioritySchedulerTest {
           Random rng = new Random();
 
           /* Setting the prescribed priority */
-          KThread.currentThread().setPriority(this.priority); 
+         KThread.currentThread().schedulingState.setPriority(this.priority); 
 
           /* Loop until some other thread has called terminate() */
           while(amIDone == false) {
