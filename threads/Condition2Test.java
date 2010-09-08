@@ -321,7 +321,7 @@ public class Condition2Test {
 
   }
 
-  private static final int maxNumActions = 100000;
+  private static final int maxNumActions = 1000;
   private static final int numProducers = 10;
   private static final int numConsumers = 100;
 

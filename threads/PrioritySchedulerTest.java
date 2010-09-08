@@ -69,7 +69,7 @@ public class PrioritySchedulerTest {
                 target = partner;
 
               /* Pick a new random priority, different from the target's current one */
-              int oldPriority = getThreadState(target).getPriority();
+              int oldPriority = c.getThreadState(target).getPriority();
               int newPriority = rng.nextInt(6);
               while (newPriority == oldPriority) {
                 newPriority = rng.nextInt(6);
@@ -78,7 +78,7 @@ public class PrioritySchedulerTest {
               /* Update the target's priority */
               System.out.println(target.getName()+"'s priority changed from "+
                                  oldPriority+" to "+newPriority);
-              target.setPriority(newPriority);
+              c.getThreadState(target).setPriority(newPriority);
             }
           }
 
@@ -124,7 +124,7 @@ public class PrioritySchedulerTest {
         pong.fork();
 
         /* Wait for a moderate lapse of time */
-        ThreadedKernel.alarm.waitUntil(50000);
+        a.waitUntil(50000);
 
         /* Terminate the threads */
         pingWorker.terminate();
@@ -206,7 +206,7 @@ public class PrioritySchedulerTest {
           Random rng = new Random();
 
           /* Setting the prescribed priority */
-         KThread.currentThread().schedulingState.setPriority(this.priority); 
+         c.getThreadState(KThread.currentThread()).setPriority(this.priority); 
 
           /* Loop until some other thread has called terminate() */
           while(amIDone == false) {
@@ -275,31 +275,39 @@ public class PrioritySchedulerTest {
            with all locks */
         PriorityDonationWorker workerLo = 
                 new PriorityDonationWorker("L-Priority",
-                                           false,7,locks);
+                                           false,2,locks);
         /* Create a Hi-priority thread that runs once and deals
            with all locks */
         PriorityDonationWorker workerHi = 
                 new PriorityDonationWorker("H-Priority",
-                                           true,2,locks);
+                                           true,7,locks);
 
-        /* Create and name all threads */
+        //Create and name all threads *lastEffectivePriority/
         KThread threadMi = new KThread(workerMi);
         threadMi.setName(workerMi.getName());
         KThread threadLo = new KThread(workerLo);
         threadLo.setName(workerLo.getName());
         KThread threadHi = new KThread(workerHi);
-        threadHi.setName(workerHi.getName());;
+        threadHi.setName(workerHi.getName());
 
         /* Fork the Low-priority thread */
         threadLo.fork();
-        ThreadedKernel.alarm.waitUntil(500);
+	a.waitUntil(500);
+	threadMi.fork();
+	a.waitUntil(500);
+	threadHi.fork();
+	
+	
+	
+	
+        
 
         /* Fork the Mid-priority thread */
-        threadMi.fork();
-        ThreadedKernel.alarm.waitUntil(500);
+       
+        
 
         /* Fork the Hi-priority thread */
-        threadHi.fork();
+        
 
         /* Waiting for the Hi-priority thread 
          * If priority Donation is not implemented (correctly),
@@ -371,11 +379,11 @@ public class PrioritySchedulerTest {
 
         /* Fork the Low-priority thread */
         threadLo.fork();
-        ThreadedKernel.alarm.waitUntil(500);
+        a.waitUntil(500);
 
         /* Fork the Mid-priority thread */
         threadMi.fork();
-        ThreadedKernel.alarm.waitUntil(500);
+        a.waitUntil(500);
 
         /* Fork the Higher- and Highest-priority thread */
         threadHigher.fork();
@@ -489,11 +497,11 @@ public class PrioritySchedulerTest {
 
         /* Fork the Lo-priority thread */
         threadLo.fork();
-        ThreadedKernel.alarm.waitUntil(50*testSize);
+        a.waitUntil(50*testSize);
 
         /* Fork the Mid-priority thread */
         threadMi.fork();
-        ThreadedKernel.alarm.waitUntil(500);
+        a.waitUntil(500);
 
         /* Fork all Hi-priority thread */
         for (int i=0; i < testSize; i++) {
@@ -528,10 +536,10 @@ public class PrioritySchedulerTest {
         runPingPongTest();
 
         /* Simplest priority donation test */
-        runPriorityDonationTest1();
+        //runPriorityDonationTest1();
 
         /*  More sophisticated donation test */
-        runPriorityDonationTest2();
+        //runPriorityDonationTest2();
 
         /*  Complex donation test */
         runPriorityDonationTest3();
@@ -540,4 +548,6 @@ public class PrioritySchedulerTest {
         System.out.println("## PriorityScheduler testing ends ##");
         System.out.println("####################################\n");
     }
+    private static PriorityScheduler c=new PriorityScheduler();
+    private static Alarm a=new Alarm();
 }
