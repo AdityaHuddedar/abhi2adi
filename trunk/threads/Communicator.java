@@ -9,16 +9,14 @@ import java.util.*;
  * be a time when both a speaker and a listener are waiting, because the two
  * threads can be paired off at this point.There should always be equal number of speakers and listeners during the whole execution
  */
-public class Communicator {
+public class Communicator 
+{
         private Lock commLock;
         private Condition2 readyCond;
         private Condition2 hasWord;
-        //private Condition2 speakers;
         private LinkedList<Integer> words;
         private int count;
-        //private boolean hasListener;
-        //private boolean hasSpoken;
-
+	
         /**
          * Allocate a new communicator.
          */
@@ -81,9 +79,7 @@ public class Communicator {
 		{
 			readyCond.wake();
 			count--;
-			hasWord.sleep();
-                        //System.out.println("I got a word!/dere wz speaker");
-			
+			hasWord.sleep();//System.out.println("I got a word!/dere wz speaker");
                         commLock.release();
                         return words.remove(0);
                 }      

@@ -296,16 +296,7 @@ public class PrioritySchedulerTest {
 	threadMi.fork();
 	a.waitUntil(500);
 	threadHi.fork();
-	
-	
-	
-	
-        
-
         /* Fork the Mid-priority thread */
-       
-        
-
         /* Fork the Hi-priority thread */
         
 
@@ -533,16 +524,16 @@ public class PrioritySchedulerTest {
         System.out.println("######################################\n");
 
         /* A simple ping-pong test */
-        runPingPongTest();
+        //runPingPongTest();
 
         /* Simplest priority donation test */
-        //runPriorityDonationTest1();
+        runPriorityDonationTest1();
 
         /*  More sophisticated donation test */
         //runPriorityDonationTest2();
 
         /*  Complex donation test */
-        runPriorityDonationTest3();
+        //runPriorityDonationTest3();
 
         System.out.println("####################################");
         System.out.println("## PriorityScheduler testing ends ##");
