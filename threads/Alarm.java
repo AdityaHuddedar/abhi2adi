@@ -8,8 +8,8 @@ import java.util.*;
  * until a certain time.
  */
 public class Alarm {
-        private PriorityQueue<Long> wakeTimes;
-        private HashMap<Long,LinkedList<KThread>> waiters;
+        private PriorityQueue<Long> wakeTimes; //PriorityQueue of wakeTimes to store the values in increasing order
+        private HashMap<Long,LinkedList<KThread>> waiters; //A HashMap mapping the wakeTime to the list of waiters waiting till that time
         /**
          * Allocate a new Alarm. Set the machine's timer interrupt handler to this
          * alarm's callback.
@@ -37,23 +37,21 @@ public class Alarm {
 		LinkedList<KThread> firstWaiters;
                 if(wakeTimes.size() > 0){
                         long firstWakeTime = wakeTimes.peek();
-			while (Machine.timer().getTime()>=firstWakeTime)
+			while (Machine.timer().getTime()>=firstWakeTime) //Browse the wakeTime queue till the wakeTime<=currentTime
 			{
-                        firstWaiters = waiters.get(firstWakeTime);
-			
-                        if(firstWaiters != null){
-                                for(int i=0;i<firstWaiters.size();i++)
-				    firstWaiters.get(i).ready();
-				
-                                // Remove the newly awakened thread, and it's corresponding
-                                // wait time entry.
-                                waiters.remove(firstWaiters);
-                                wakeTimes.poll();
-				if(wakeTimes.size()==0)
-				    break;
-				firstWakeTime=wakeTimes.peek();
-                                
-                        }
+			    firstWaiters = waiters.get(firstWakeTime);
+			    if(firstWaiters != null)
+			    {
+				    for(int i=0;i<firstWaiters.size();i++)
+				    firstWaiters.get(i).ready();  //Ready all the threads waiting till the given wakeTime
+				    
+				    waiters.remove(firstWaiters); //Remove the newly awakened Thread List
+				    wakeTimes.poll();             //and its wakeTime entry in the HashMap  
+				    if(wakeTimes.size()==0)
+				    break;                        //Break if the wakeTimes queue becomes empty
+				    firstWakeTime=wakeTimes.peek();
+				    
+			    }
 			}
                 }
                 Machine.interrupt().restore(intStatus);
@@ -79,7 +77,7 @@ public class Alarm {
                 long wakeTime = Machine.timer().getTime() + x;
                 KThread temp = KThread.currentThread();
 
-		if(waiters.containsKey(wakeTime))
+		if(waiters.containsKey(wakeTime)) //wakeTime entry already present
 		{
 		    LinkedList templist = waiters.get(wakeTime);
 		    templist.add(temp);
@@ -96,31 +94,38 @@ public class Alarm {
                 KThread.sleep();
                 Machine.interrupt().restore(intStatus);
         }
-
-        public static void selfTest(final Alarm a) {
-	        AlarmTest.runTest();
-                /*System.out.println();
-                System.out.println("Testing Alarm...");
-                KThread t1 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("thread 1 waiting.");
-                                a.waitUntil(10000250);
-                                System.out.println("thread 1 waited.");
-                        }
-                });
-
-                KThread t2 = new KThread(new Runnable(){
-                        public void run(){
-                                System.out.println("thread 2 waiting.");
-                                a.waitUntil(10000250);
-                                System.out.println("thread 2 waited.");
-                        }
-                });
-
-                t1.fork();
-                t2.fork();
-
-                t1.join();
-                t2.join();*/
+	
+	
+	private static class alarmTest implements Runnable //Runnable Class for an alarmThread
+	{
+	    private long wTime;
+	    Alarm a;
+	    public alarmTest(long x,final Alarm a) {
+	    wTime=x;
+	    this.a=a;
+	    }
+	    
+	    public void run() {
+		//set wait time for thread
+		a.waitUntil(wTime);
+		//finished waiting
+		System.out.println("Alarm Active! (time = "
+		+Machine.timer().getTime()+")");
+	    }
+	}
+        public static void selfTest(final Alarm a) 
+        {        
+		//Create 3 threads with different waitTimes
+		KThread Thread1 = new KThread( new alarmTest(5000,a));
+		KThread Thread2 = new KThread( new alarmTest(5200,a));
+		KThread Thread3 = new KThread( new alarmTest(5400,a));
+		
+		Thread1.fork();
+		Thread2.fork();
+		Thread3.fork();
+		
+		Thread1.join();
+		Thread2.join();
+		Thread3.join();
         }
 }

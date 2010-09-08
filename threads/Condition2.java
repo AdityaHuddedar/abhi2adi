@@ -24,7 +24,6 @@ public class Condition2 {
          */
         public Condition2(Lock conditionLock) {
                 this.conditionLock = conditionLock;
-
                 waitQueue = new LinkedList<KThread>();
         }
 
@@ -36,14 +35,11 @@ public class Condition2 {
          */
         public void sleep() {
                 Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-
                 boolean intStatus = Machine.interrupt().disable();
                 waitQueue.add(KThread.currentThread());
-
                 conditionLock.release();
                 KThread.sleep();
                 conditionLock.acquire();
-
                 Machine.interrupt().restore(intStatus);
         }
 
@@ -53,7 +49,6 @@ public class Condition2 {
          */
         public void wake() {
                 Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-
                 boolean intStatus = Machine.interrupt().disable();              
                 if(!waitQueue.isEmpty()){
                         waitQueue.poll().ready();
@@ -65,8 +60,8 @@ public class Condition2 {
          * Wake up all threads sleeping on this condition variable. The current
          * thread must hold the associated lock.
          */
-        public void wakeAll() {
-               
+        public void wakeAll() 
+        {       
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
                 boolean intStatus = Machine.interrupt().disable();
                 while(!waitQueue.isEmpty()){
@@ -76,40 +71,41 @@ public class Condition2 {
         }
 
         public static void selfTest(final Alarm a) {
-	    Condition2Test.runTest();
-//                 System.out.println();
-//                 System.out.println("Testing Condition2...");
-//                 final Lock l = new Lock();
-//                 final Condition2 testCond = new Condition2(l);
-// 
-//                 KThread t1 = new KThread(new Runnable(){
-//                         public void run(){
-//                                 System.out.println("Thread 1 sleeping...");
-//                                 l.acquire();
-//                                 testCond.sleep();
-//                                 l.release();
-//                                 System.out.println("Thread 1 awake.");
-//                         }
-//                 });
-// 
-//                 KThread t2 = new KThread(new Runnable(){
-//                         public void run(){
-//                                 System.out.println("Thread 2 waking thread 1 in a second or so...");
-//                                 a.waitUntil(1000);
-//                                 l.acquire();
-//                                 testCond.wake();
-//                                 l.release();
-//                                 System.out.println("Thread 2 woke thread 1.");
-//                         }
-//                 });
-// 
-//                 t1.fork();
-//                 t2.fork();
-// 
-//                 t1.join();
-//                 t2.join();
-        }
+		//Condition2Test.runTest();
+                System.out.println();
+                System.out.println("Testing Condition2...");
+                final Lock l = new Lock();
+		final Semaphore s=new Semaphore(0);
+                final Condition2 testCond = new Condition2(l);
+                KThread t1 = new KThread(new Runnable(){
+                        public void run(){
+                                System.out.println("Thread 1 sleeping...");
+                                l.acquire();
+                                testCond.sleep();
+				s.P();
+                                l.release();
+                                System.out.println("Thread 1 awake.");
+                        }
+                });
 
+                KThread t2 = new KThread(new Runnable(){
+                        public void run(){
+				s.V();
+                                System.out.println("Thread 2 waking thread 1 in a second or so...");
+                                a.waitUntil(1000);
+                                l.acquire();
+                                testCond.wake();
+                                l.release();
+                                System.out.println("Thread 2 woke thread 1.");
+                        }
+                });
+
+                t1.fork();
+                t2.fork();
+
+                t1.join();
+                t2.join();
+        }
         private Lock conditionLock;
         private LinkedList<KThread> waitQueue;
 }
