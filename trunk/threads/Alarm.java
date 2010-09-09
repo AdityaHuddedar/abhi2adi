@@ -32,6 +32,7 @@ public class Alarm {
          * thread to yield, forcing a context switch if there is another thread
          * that should be run.
          */
+	
         public void timerInterrupt() {
                 boolean intStatus = Machine.interrupt().disable();
 		LinkedList<KThread> firstWaiters;
@@ -72,6 +73,7 @@ public class Alarm {
          *
          * @see nachos.machine.Timer#getTime()
          */
+	
         public void waitUntil(long x) {
 		boolean intStatus = Machine.interrupt().disable();
                 long wakeTime = Machine.timer().getTime() + x;
@@ -80,12 +82,12 @@ public class Alarm {
 		if(waiters.containsKey(wakeTime)) //wakeTime entry already present
 		{
 		    LinkedList templist = waiters.get(wakeTime);
-		    templist.add(temp);
+		    templist.add(temp);           //Append the currentThread to the list corresponding to the wakeTime
 		    waiters.put(wakeTime,templist);
 		}
 		else
 		{
-		    wakeTimes.add(wakeTime);
+		    wakeTimes.add(wakeTime);      //Add the wakeTime to the wakeTime PriorityQueue and make a new LinkedList with the currentThread as its only element
 		    LinkedList<KThread> templist = new LinkedList<KThread>();
 		    templist.add(temp);
 		    waiters.put(wakeTime,templist);
@@ -95,30 +97,34 @@ public class Alarm {
                 Machine.interrupt().restore(intStatus);
         }
 	
+	/**Alarm is tested by setting up three threads to waitUntil random time intervals between 5000 and 10000 and
+           print the times at which they wake up.Times can be adjusted in such a way that threads
+           try to wake up at about the same time.
+	*/
 	
 	private static class alarmTest implements Runnable //Runnable Class for an alarmThread
 	{
-	    private long wTime;
+	    private long waitTime;
 	    Alarm a;
-	    public alarmTest(long x,final Alarm a) {
-	    wTime=x;
-	    this.a=a;
+	    public alarmTest(long x,final Alarm a) 
+	    {
+		waitTime=x;
+		this.a=a;
 	    }
 	    
-	    public void run() {
-		//set wait time for thread
-		a.waitUntil(wTime);
-		//finished waiting
-		System.out.println("Alarm Active! (time = "
-		+Machine.timer().getTime()+")");
+	    public void run() 
+	    {
+		a.waitUntil(waitTime);
+		System.out.println("Alarm Active! (time = "+Machine.timer().getTime()+")");
 	    }
 	}
         public static void selfTest(final Alarm a) 
         {        
 		//Create 3 threads with different waitTimes
-		KThread Thread1 = new KThread( new alarmTest(5000,a));
-		KThread Thread2 = new KThread( new alarmTest(5200,a));
-		KThread Thread3 = new KThread( new alarmTest(5400,a));
+		Random rng=new Random();
+		KThread Thread1 = new KThread( new alarmTest(5000+rng.nextInt(5000),a));
+		KThread Thread2 = new KThread( new alarmTest(5000+rng.nextInt(5000),a));
+		KThread Thread3 = new KThread( new alarmTest(5000+rng.nextInt(5000),a));
 		
 		Thread1.fork();
 		Thread2.fork();
