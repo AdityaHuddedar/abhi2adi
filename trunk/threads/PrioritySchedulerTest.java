@@ -341,22 +341,22 @@ public class PrioritySchedulerTest {
         /* Create a Mid-priority worker, runs forever, priority 6, no locks */
         PriorityDonationWorker workerMi = 
              new PriorityDonationWorker("Mid-Priority",
-                                        false,6,noLocks);
+                                        false,2,noLocks);
 
         /* Create a Low-priority worker, runs forever, priority 7, all locks */
         PriorityDonationWorker workerLo = 
              new PriorityDonationWorker("Low-Priority",
-                                        false,7,allLocks);
+                                        false,1,allLocks);
 
         /* Create a Higher-priority worker, runs once, priority 2, first lock */
         PriorityDonationWorker workerHigher = 
              new PriorityDonationWorker("Higher-Priority",
-                                        true,2,firstLock);
+                                        true,6,firstLock);
 
         /* Create a Highest-priority worker, runs once, priority 1, second lock */
         PriorityDonationWorker workerHighest = 
              new PriorityDonationWorker("Highest-Priority",
-                                        true,1,secondLock);
+                                        true,7,secondLock);
 
         /* Create and name threads */
         KThread threadMi = new KThread(workerMi);
@@ -530,7 +530,7 @@ public class PrioritySchedulerTest {
         runPriorityDonationTest1();
 
         /*  More sophisticated donation test */
-        //runPriorityDonationTest2();
+        runPriorityDonationTest2();
 
         /*  Complex donation test */
         //runPriorityDonationTest3();
