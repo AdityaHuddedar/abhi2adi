@@ -337,7 +337,7 @@ public class PriorityScheduler extends Scheduler {
 	{
 		public KThread owner = null;
 		public boolean transferPriority;
-		private Queue<KThread> waitQueue; //waitQueue that sorts first according to priority and then according to sleepTimes (ascending)
+		private Queue<KThread> waitQueue; //waitQueue that sorts first according to effectivePriority(descending) and then according to sleepTimes (ascending)
 		PriorityQueue(boolean transferPriority) 
 		{
 			this.transferPriority = transferPriority;

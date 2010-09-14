@@ -470,16 +470,17 @@ public class KThread {
     
     public static void selfTest()
     {
-	runTest();
-	System.out.println("**********************************************");
-	Alarm.selfTest(ThreadedKernel.alarm);
-	System.out.println("**********************************************");
-	Condition2.selfTest(ThreadedKernel.alarm);
-	System.out.println("**********************************************");
-	Communicator.selfTest(ThreadedKernel.alarm);
-	System.out.println("**********************************************");
-	PriorityScheduler.selfTest();
-	System.out.println("**********************************************");
+// 	runTest();
+// 	System.out.println("**********************************************");
+// 	Alarm.selfTest(ThreadedKernel.alarm);
+// 	System.out.println("**********************************************");
+// 	Condition2.selfTest(ThreadedKernel.alarm);
+// 	System.out.println("**********************************************");
+// 	Communicator.selfTest(ThreadedKernel.alarm);
+// 	System.out.println("**********************************************");
+// 	PrioritySchedulerTest.runTest();
+// 	System.out.println("**********************************************");
+	Boat.selfTest(10,10);
     }
 
     private static final char dbgThread = 't';
