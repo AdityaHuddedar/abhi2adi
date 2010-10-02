@@ -478,9 +478,9 @@ public class KThread {
 // 	System.out.println("**********************************************");
 // 	Communicator.selfTest(ThreadedKernel.alarm);
 // 	System.out.println("**********************************************");
-// 	PrioritySchedulerTest.runTest();
+//	PrioritySchedulerTest.runTest();
 // 	System.out.println("**********************************************");
-	Boat.selfTest(10,10);
+//	Boat.selfTest(10,10);
     }
 
     private static final char dbgThread = 't';
