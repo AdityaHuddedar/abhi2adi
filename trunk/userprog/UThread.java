@@ -1,5 +1,4 @@
 package nachos.userprog;
-
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
