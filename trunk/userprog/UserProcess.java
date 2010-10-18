@@ -28,8 +28,7 @@ public class UserProcess {
         public UserProcess() {
                 childExitStatuses = new HashMap<Integer, Integer>();
                 children = new HashMap<Integer, UserProcess>();
-
-                pageTable = new TranslationEntry[numVirtualPages];
+		pageTable = new TranslationEntry[numVirtualPages];
 
                 for (int i=0; i<numVirtualPages; i++)
                         pageTable[i] = new TranslationEntry(i,i, true,false,false,false);
@@ -628,7 +627,7 @@ public class UserProcess {
                         }
 
                         descriptorTable.add(openedFile);
-                        return descriptorTable.indexOf(openedFile);
+			return descriptorTable.indexOf(openedFile);
                 }
         }
 
@@ -707,7 +706,7 @@ public class UserProcess {
                 if(a0 < descriptorTable.size() && a0 >= 0 &&
                                 descriptorTable.get(a0) != null){
                         descriptorTable.get(a0).close();
-                        descriptorTable.remove(a0);
+		        descriptorTable.remove(a0);
                         return 0;
                 }
 
@@ -719,7 +718,15 @@ public class UserProcess {
                 if(filename == null){
                         return -1;
                 }else{
-                        if(!UserKernel.fileSystem.remove(filename)){
+		  for (UserProcess process : children)
+		  { 
+		    for(OpenFile file : process.descriptorTable)
+		    {
+		      if (filename==file.getName()) return -1;
+		    }
+		  }
+		      
+		  if(!UserKernel.fileSystem.remove(filename)){
                                 return -1;
                         }else{
                                 return 0;
@@ -865,7 +872,7 @@ public class UserProcess {
 
         protected UThread processThread;
         protected UserProcess parent;
-
+	
         public HashMap<Integer, Integer> getChildExitStatuses() {
                 return childExitStatuses;
         }
