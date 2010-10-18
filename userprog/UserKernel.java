@@ -51,11 +51,11 @@ public class UserKernel extends ThreadedKernel {
 	//int m=P.handleSyscall(4,200,0,0,0);
 	int test=P.handleSyscall(5,200,0,0,0);
 	//int y=P.handleSyscall(6,3,300,7,0);
-	int x=P.handleSyscall(9,200,0,0,0);
+	//int x=P.handleSyscall(9,200,0,0,0);
 	int test_close=P.handleSyscall(8,n,0,0,0);
 	String s=P.readVirtualMemoryString(300,7);
-	for(int i=0;i<in_data.length;i++) System.out.println((char)in_data[i]);
-	System.out.println(n+" "+data[0]+" "+k+" "+l+" "+test+" "+x+" "+s+" "+test_close);
+// 	for(int i=0;i<in_data.length;i++) System.out.println((char)in_data[i]);
+	System.out.println(n+" "+data[0]+" "+k+" "+l+" "+test+" "+s+" "+test_close);
 	
         }
 
